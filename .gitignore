@@ -38,6 +38,7 @@ yarn-error.log
 testem.log
 /typings
 /src/backend/db.sqlite
+.editorconfig
 
 # System files
 .DS_Store
