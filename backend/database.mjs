@@ -9,7 +9,7 @@ export async function updateAllItems() {
     let imgs = await getItemImgs();
 
     let count = 0;
-    let bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    let bar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
     bar.start(items.length, 0);
 
     await db.run('BEGIN TRANSACTION');
@@ -18,7 +18,11 @@ export async function updateAllItems() {
         bar.update(++count);
     }
     await db.run('COMMIT');
+    
     bar.stop();
+    // clears the progress bar
+    process.stdout.moveCursor(0, -1);
+    process.stdout.clearLine(1);
 }
 
 export async function getAllItems() {

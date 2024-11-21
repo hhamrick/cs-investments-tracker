@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { getItem, getFilteredItems } from './database.mjs';
+import { updateAllItems, getItem, getFilteredItems } from './database.mjs';
 
 const app = express();
 const port = 3000;
@@ -39,6 +39,22 @@ app.get('/items/search/:keywords', async (req, res) => {
     res.status(404).send('No items found.');
 });
   
-app.listen(port, () => {
+let server = app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+// updates the items db every 5 mins
+let interval = setInterval(async () => {
+    console.log(`${new Date().toLocaleTimeString()} - Updating items database`);
+    await updateAllItems();
+}, 5 * 60 * 1000);
+
+process.on('SIGINT', () => {
+    clearInterval(interval);
+    server.close(process.exit(0));
+})
+
+process.on('SIGTERM', () => {
+    clearInterval(interval);
+    server.close(process.exit(0));
+})
