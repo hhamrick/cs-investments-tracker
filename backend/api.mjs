@@ -1,21 +1,18 @@
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import { updateAllItems, getItem, getFilteredItems } from './database.mjs';
 
 const app = express();
 const port = 3000;
 
-app.use(bodyParser.json())
+app.use(cors());
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    res.send('Hello world!');
-});
+const api = express.Router();
+app.use('/api', api);
 
-app.get('/items', async (req, res) => {
-    res.status(500).send("Needs to be implemented");
-});
-
-app.get('/items/:name', async (req, res) => {
+api.get('/items/:name', async (req, res) => {
     let name = req.params.name;
 
     let item = await getItem(name);
@@ -27,7 +24,7 @@ app.get('/items/:name', async (req, res) => {
     res.status(404).send('No item found.');
 });
 
-app.get('/items/search/:keywords', async (req, res) => {
+api.get('/items/search/:keywords', async (req, res) => {
     let keywords = req.params.keywords;
 
     let items = await getFilteredItems(keywords);
@@ -44,17 +41,17 @@ let server = app.listen(port, () => {
 });
 
 // updates the items db every 5 mins
-let interval = setInterval(async () => {
-    console.log(`${new Date().toLocaleTimeString()} - Updating items database`);
-    await updateAllItems();
-}, 5 * 60 * 1000);
+// let interval = setInterval(async () => {
+//     console.log(`${new Date().toLocaleTimeString()} - Updating items database`);
+//     await updateAllItems();
+// }, 5 * 60 * 1000);
 
-process.on('SIGINT', () => {
-    clearInterval(interval);
-    server.close(process.exit(0));
-})
+// process.on('SIGINT', () => {
+//     clearInterval(interval);
+//     server.close(process.exit(0));
+// })
 
-process.on('SIGTERM', () => {
-    clearInterval(interval);
-    server.close(process.exit(0));
-})
+// process.on('SIGTERM', () => {
+//     clearInterval(interval);
+//     server.close(process.exit(0));
+// })

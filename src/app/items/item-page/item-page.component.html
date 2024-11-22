@@ -1,0 +1,6 @@
+<div *ngIf="item | async as item">
+    <p>{{item.name}} - {{item.price | currency:'USD'}}</p>
+    <img src="{{item.url}}">
+</div>
+
+<app-not-found-page *ngIf="itemIsNull" />
