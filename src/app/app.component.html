@@ -1,11 +1,18 @@
 <mat-toolbar class="header">
     CS Investments Tracker
     <nav>
-        <button mat-button routerLink="/" routerLinkActive="active">Home</button>
-        <button mat-button routerLink="/items" routerLinkActive="active">Items</button>
+        <button mat-button routerLink="/">Home</button>
+        <button mat-button routerLink="/items">Items</button>
+        <button *ngIf="!(user | async)" mat-button (click)="login()">Login</button>
+        <button *ngIf="user | async as user" mat-icon-button [matMenuTriggerFor]="menu" class="avatar">
+            <img src="{{user.avatar}}">
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="logout()" style="color: red">Logout</button>
+        </mat-menu>
     </nav>
 </mat-toolbar>
 
 <div class="content">
     <router-outlet />
-</div>
+</div>  

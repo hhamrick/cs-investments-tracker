@@ -1,14 +1,28 @@
-.header {
+.content, .header {
+    padding: 0 20px;
+}
+
+.header nav {
     display: flex;
-    justify-content: space-between;
-    padding: 20px;
+    align-items: center;
+    margin-left: auto;
 }
 
 button {
     margin-left: 5px;
-    border-radius: 0;
 }
 
-.content {
-    padding: 0 20px;
+.avatar {
+    height: 50px;
+    width: 50px;
+    margin-left: 20px;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid black;
+}
+
+.avatar img { 
+    height: 100%;
+    width: 100%;
 }

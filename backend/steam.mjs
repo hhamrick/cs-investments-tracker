@@ -1,7 +1,4 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
-const APIKEY = process.env.STEAMAPIKEY;
+const APIKEY = process.env.STEAMMARKETAPIKEY;
 const APPID = 730;
 
 export async function getCSItems() {
