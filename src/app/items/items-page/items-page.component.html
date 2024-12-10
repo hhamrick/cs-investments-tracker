@@ -1,11 +1,4 @@
-<mat-form-field appearance="outline">
-    <mat-label>Search for skins</mat-label>
-    <input matInput [(ngModel)]="searchTxt" (keydown.enter)="onSearchClick()" placeholder="" />
-</mat-form-field>
-
-<button mat-raised-button (click)="onSearchClick()">Search</button>
-
 <div *ngFor="let item of items | async">
     <p>{{item.name}} - {{item.price | currency:'USD'}}</p>
-    <a routerLink="{{item.name}}"><img src="{{item.url}}"></a>
+    <a [routerLink]="['/items', item.name]"><img src="{{item.url}}"></a>
 </div>
