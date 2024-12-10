@@ -42,3 +42,26 @@ export async function getFilteredItems(keywords) {
 
     return await db.all(query, values);
 }
+
+export async function addInvTransaction(user_id, item_name, quantity, price) {
+    let res = await db.run(`
+        INSERT INTO inventory (user_id, item_name, quantity, price) VALUES (?, ?, ?, ?)`,
+        [user_id, item_name, quantity, price]
+    )
+
+    return await db.get(`SELECT id, item_name, quantity, price FROM inventory WHERE id = ?`, [res.lastID]);
+}
+
+export async function getTransactions(user_id, item_name) {
+    if (item_name) {
+        return await db.all(
+            `SELECT id, item_name, quantity, price FROM inventory WHERE user_id = ? AND item_name = ? ORDER BY time DESC`,
+            [user_id, item_name]
+        );
+    }
+
+    return await db.all(
+        `SELECT id, item_name, quantity, price FROM inventory WHERE user_id = ? ORDER BY time DESC`,
+        [user_id]
+    );
+}

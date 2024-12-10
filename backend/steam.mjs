@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 const APIKEY = process.env.STEAMMARKETAPIKEY;
 const APPID = 730;
 

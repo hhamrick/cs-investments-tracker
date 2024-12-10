@@ -16,7 +16,6 @@ items.get('/:name', async (req, res) => {
 });
 
 items.get('/search/:keywords', async (req, res) => {
-    console.log(req.session.passport ? req.session.passport.user : {user:null});
     let keywords = req.params.keywords;
 
     let items = await getFilteredItems(keywords);

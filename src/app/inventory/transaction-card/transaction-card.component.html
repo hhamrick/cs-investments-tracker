@@ -1,0 +1,7 @@
+<p *ngIf="$transaction | async as transaction">
+    {{transaction.quantity > 0 ? 'Buy' : 'Sell'}} : Price {{transaction.price | currency:'USD'}} | Quantity {{transaction.quantity}} | Total {{transaction.price * transaction.quantity | currency:'USD'}}
+</p>
+
+<!-- <mat-card *ngIf="$transaction | async as transaction">
+
+</mat-card> -->

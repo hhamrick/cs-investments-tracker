@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
+import { InventoryService } from '../inventory/inventory.service';
+import { Observable } from 'rxjs';
+import { Inventory } from '../inventory/inventory.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home-page',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })
@@ -11,5 +15,11 @@ export class HomePageComponent {
     path: '',
     title: 'Home',
     component: HomePageComponent
+  }
+
+  inventory: Observable<Inventory  | null>;
+
+  constructor(private inventoryService: InventoryService) {
+    this.inventory = inventoryService.getTransactions();
   }
 }

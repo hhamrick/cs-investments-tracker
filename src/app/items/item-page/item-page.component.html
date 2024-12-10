@@ -1,6 +1,11 @@
 <div *ngIf="item | async as item">
     <p>{{item.name}} - {{item.price | currency:'USD'}}</p>
     <img src="{{item.url}}">
+    
+    <div *ngIf="inventory | async as inventory">
+        Transactions:
+        <app-transaction-card *ngFor="let transaction of inventory.transactions" [transaction]="transaction" />
+    </div>
 </div>
 
 <app-not-found-page *ngIf="itemIsNull" />

@@ -1,1 +1,4 @@
-<p>home-page works!</p>
+<div *ngIf="inventory | async as inventory">
+    <p>Items: {{inventory.stats.total_quantity}}</p>
+    <p>Spent: {{inventory.stats.total_spent | currency:'USD'}}</p>
+</div>

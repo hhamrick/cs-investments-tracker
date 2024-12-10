@@ -6,6 +6,7 @@ import { updateAllItems } from './database.mjs';
 // routes
 import { auth } from './routes/auth.mjs';
 import { items } from './routes/items.mjs';
+import { inventory } from './routes/inventory.mjs';
 
 const app = express();
 const port = 3000;
@@ -22,6 +23,7 @@ app.use(session({
 // setup routes
 app.use('/auth', auth);
 app.use('/api/items', items);
+app.use('/api/inventory', inventory);
   
 let server = app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
