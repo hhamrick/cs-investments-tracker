@@ -17,6 +17,10 @@ export class InventoryService {
     });
   }
 
+  deleteTransaction(id: number) {
+    this.http.delete<null>(`api/inventory/transaction/${id}`).subscribe();
+  }
+
   getTransactions(item_name?: string): Observable<Inventory | null> {
     if (item_name) {
       return this.http.get<Inventory>(`api/inventory/transactions?item=${item_name}`).pipe(catchError(() => of(null)));

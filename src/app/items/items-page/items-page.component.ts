@@ -4,10 +4,11 @@ import { Item } from '../items.model';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-items-page',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MatCardModule],
   templateUrl: './items-page.component.html',
   styleUrl: './items-page.component.css'
 })

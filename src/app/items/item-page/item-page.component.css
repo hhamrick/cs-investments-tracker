@@ -1,4 +1,18 @@
+mat-card {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.item, .stats {
+    align-items: center;
+    padding: 20px;
+}
+
+.stats, .table {
+    margin-top: 40px;
+}
+
 img {
-    height: 200px;
-    margin: 0;
+    width: 30%;
+    margin-top: 20px;
 }

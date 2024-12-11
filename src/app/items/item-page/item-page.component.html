@@ -1,10 +1,22 @@
 <div *ngIf="item | async as item">
-    <p>{{item.name}} - {{item.price | currency:'USD'}}</p>
-    <img src="{{item.url}}">
-    
-    <div *ngIf="inventory | async as inventory">
-        Transactions:
-        <app-transaction-card *ngFor="let transaction of inventory.transactions" [transaction]="transaction" />
+    <mat-card appearance="outlined" class="item">
+        <mat-card-title>{{item.name}} - {{item.price | currency:'USD'}}</mat-card-title>
+        <img mat-card-img src="{{item.url}}">
+    </mat-card>
+
+    <div *ngIf="inventory | async as inventory">        
+        <mat-card appearance="outlined" class="table">
+            <app-transaction-table [transactions]="inventory.transactions" />
+        </mat-card>
+
+        <mat-card appearance="outlined" class="stats">
+            <mat-card-subtitle>Held Quantity: {{inventory.stats.total_quantity}}</mat-card-subtitle>
+            <mat-card-subtitle>Average Price: {{inventory.stats.avg_price | currency:'USD'}}</mat-card-subtitle>
+            <mat-card-subtitle>Held Value: {{getHeldValue(inventory, item) | currency:'USD'}}</mat-card-subtitle>
+            <mat-card-subtitle>Total Spent: {{inventory.stats.total_spent | currency:'USD'}}</mat-card-subtitle>
+            <mat-card-subtitle>Total Sold: {{-inventory.stats.total_sold | currency:'USD'}}</mat-card-subtitle>
+            <mat-card-subtitle>Profit: {{getProfit(inventory, item) | currency:'USD'}} ({{getProfitPercent(inventory, item) | percent:'1.2'}})</mat-card-subtitle>
+        </mat-card>
     </div>
 </div>
 

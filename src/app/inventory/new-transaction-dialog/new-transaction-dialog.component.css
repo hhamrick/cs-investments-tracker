@@ -1,0 +1,7 @@
+mat-dialog-content {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin: 0 auto;
+    margin-top: 20px;
+}

@@ -1,6 +1,7 @@
 export interface Stats {
     total_quantity: number;
     total_spent: number;
+    total_sold: number;
     avg_price: number;
 }
 

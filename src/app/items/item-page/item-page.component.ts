@@ -7,11 +7,12 @@ import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
 import { InventoryService } from '../../inventory/inventory.service';
 import { Inventory } from '../../inventory/inventory.model';
-import { TransactionCardComponent } from "../../inventory/transaction-card/transaction-card.component";
+import { TransactionTableComponent } from "../../inventory/transaction-table/transaction-table.component";
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-item-page',
-  imports: [CommonModule, NotFoundPageComponent, TransactionCardComponent],
+  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule],
   templateUrl: './item-page.component.html',
   styleUrl: './item-page.component.css'
 })
@@ -36,5 +37,17 @@ export class ItemPageComponent {
         this.inventory = inventoryService.getTransactions(item.name);
       }
     })
+  }
+
+  getHeldValue(inventory: Inventory, item: Item) {
+    return inventory.stats.total_quantity * item.price;
+  }
+
+  getProfit(inventory: Inventory, item: Item) {
+    return this.getHeldValue(inventory, item) - inventory.stats.total_sold - inventory.stats.total_spent;
+  }
+
+  getProfitPercent(inventory: Inventory, item: Item) {
+    return this.getProfit(inventory, item) / inventory.stats.total_spent;
   }
 }

@@ -1,4 +1,8 @@
 <div *ngIf="inventory | async as inventory">
-    <p>Items: {{inventory.stats.total_quantity}}</p>
-    <p>Spent: {{inventory.stats.total_spent | currency:'USD'}}</p>
+    <mat-card appearance="outlined">
+        <mat-card-subtitle>Items: {{inventory.stats.total_quantity}}</mat-card-subtitle>
+        <mat-card-subtitle>Total Spent: {{inventory.stats.total_spent | currency:'USD'}}</mat-card-subtitle>
+        <mat-card-subtitle>Total Sold: {{inventory.stats.total_sold | currency:'USD'}}</mat-card-subtitle>
+        <mat-card-subtitle>Average Item Price: {{inventory.stats.avg_price| currency:'USD'}}</mat-card-subtitle>
+    </mat-card>
 </div>
