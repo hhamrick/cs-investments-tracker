@@ -1,14 +1,4 @@
-<!-- <p *ngIf="$transaction | async as transaction">
-    {{transaction.quantity > 0 ? 'Buy' : 'Sell'}} : Price {{transaction.price | currency:'USD'}} | Quantity {{transaction.quantity}} | Total {{transaction.price * transaction.quantity | currency:'USD'}}
-</p> -->
-
-<!-- <div *ngIf="$transactions | async as transactions">
-    <div *ngFor="let transaction of transactions">
-        <p>{{transaction.quantity > 0 ? 'Buy' : 'Sell'}} : Price {{transaction.price | currency:'USD'}} | Quantity {{transaction.quantity}} | Total {{transaction.price * transaction.quantity | currency:'USD'}}</p>
-    </div>
-</div> -->
-
-<table mat-table *ngIf="transactions" [dataSource]="dataSource">
+<table mat-table [dataSource]="dataSource">
     <ng-container matColumnDef="buysell">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let transaction">{{transaction.quantity > 0 ? 'Buy' : 'Sell'}}</td>
