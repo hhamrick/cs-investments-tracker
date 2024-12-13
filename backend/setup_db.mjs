@@ -1,12 +1,14 @@
 import { db } from './database.mjs';
-import { updateAllItems } from './database.mjs';
+import { updateAllItems, updateAllItemsNew } from './database.mjs';
 
 await db.exec(`
     DROP TABLE IF EXISTS items;
     CREATE TABLE items(
         name TEXT PRIMARY KEY,
         price REAL,
-        url TEXT
+        img_url TEXT,
+        parent_name INTEGER,
+        FOREIGN KEY(parent_name) REFERENCES items(name)
     );
 `);
 
@@ -23,6 +25,6 @@ await db.exec(`
     );
 `);
 
-await updateAllItems();
+await updateAllItemsNew();
 
 db.close();

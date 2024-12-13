@@ -1,7 +1,7 @@
 <div *ngIf="item | async as item">
     <mat-card appearance="outlined" class="item">
-        <mat-card-title>{{item.name}} - {{item.price | currency:'USD'}}</mat-card-title>
-        <img mat-card-img src="{{item.url}}">
+        <mat-card-title>{{item.name}} - {{item.price}}</mat-card-title>
+        <img mat-card-img src="{{item.img_url}}">
     </mat-card>
 
     <div *ngIf="inventory | async as inventory">        

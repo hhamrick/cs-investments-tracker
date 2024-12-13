@@ -1,6 +1,7 @@
 import { Database } from 'sqlite-async';
 import cliProgress from 'cli-progress';
 import { getCSItems, getItemImgs } from './steam.mjs';
+import { P } from '@angular/cdk/keycodes';
 
 export let db = await Database.open('db.sqlite');
 
@@ -14,7 +15,17 @@ export async function updateAllItems() {
 
     await db.run('BEGIN TRANSACTION');
     for (let [name, price] of items) {
-        let res = await db.run(`INSERT OR REPLACE INTO items (name, price, url) VALUES (?, ?, ?)`, [name, price, imgs[name]]);
+        let img_url = imgs[name];
+
+        await db.run(`INSERT OR REPLACE INTO items (name, price, img_url) VALUES (?, ?, ?)`, [name, price, img_url]);
+
+        let parent_name = nameToParentName(name);
+        // parent item needed
+        if (parent_name != name) {
+            await db.run(`INSERT OR REPLACE INTO items (name) VALUES (?)`, [parent_name]);
+            await db.run(`UPDATE items SET parent_name = ? WHERE name = ?`, [parent_name, name]);
+        }
+
         bar.update(++count);
     }
     await db.run('COMMIT');
@@ -25,6 +36,14 @@ export async function updateAllItems() {
     process.stdout.clearLine(1);
 }
 
+function nameToParentName(item_name) {
+    // regex for properties to look for in items that can be split into subitems
+    let stattrak_regex = /^StatTrak™\s*/
+    let wear_regex = /\s*\(.*\)$/;
+
+    return item_name.replace(stattrak_regex, '').replace(wear_regex, '');
+}
+
 export async function getAllItems() {
     return await db.all('SELECT * FROM items');
 }
@@ -33,14 +52,57 @@ export async function getItem(name) {
     return await db.get('SELECT * FROM items WHERE name = ?', [name]);
 }
 
+export async function getItemNew(name) {
+    let item = await db.get('SELECT * FROM items WHERE name = ?', [name]);
+
+    if (item.parent_name) return null; // cant get subitem directly
+
+    item.sub_items = await db.all(`SELECT * FROM items WHERE parent_name = ?`, [item.name]);
+
+    if (item.sub_items.length > 0) {
+        let min_item = item.sub_items.reduce((low, curr) => curr.price < low.price ? curr : low, item.sub_items[0]);
+        let max_item = item.sub_items.reduce((high, curr) => curr.price > high.price ? curr : high, item.sub_items[0]);
+
+        item.price = `$${min_item.price} - $${max_item.price}`;
+        item.img_url = max_item.img_url;
+    } else {
+        item.price = `$${item.price}`;
+    }
+
+    // remove parent_name
+    delete item.parent_name;
+    item.sub_items.forEach(i => delete i.parent_name)
+    
+    return item;
+}
+
 export async function getFilteredItems(keywords) {
     let words = keywords.split(' ');
 
     let conditions = words.map(word => 'name LIKE ?').join(' AND ');
     let values = words.map(word => `%${word}%`);
-    let query = `SELECT * FROM items WHERE ${conditions}`;
+    let query = `SELECT name, price, img_url FROM items WHERE ${conditions} AND parent_name IS NULL`;
 
-    return await db.all(query, values);
+    let items = await db.all(query, values);
+
+
+    for (let item of items) {
+        if (!item.price) {
+            let sub_items = await db.all(`SELECT * FROM items WHERE parent_name = ?`, [item.name]);
+
+            if (sub_items.length > 0) {
+                let min_item = sub_items.reduce((low, curr) => curr.price < low.price ? curr : low, sub_items[0]);
+                let max_item = sub_items.reduce((high, curr) => curr.price > high.price ? curr : high, sub_items[0]);
+
+                item.price = `$${min_item.price} - $${max_item.price}`;
+                item.img_url = max_item.img_url;
+            }
+        } else {
+            item.price = `$${item.price}`;
+        }
+    }
+
+    return items;
 }
 
 export async function addInvTransaction(user_id, item_name, quantity, price) {

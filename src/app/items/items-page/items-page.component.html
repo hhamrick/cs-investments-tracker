@@ -2,8 +2,8 @@
     <div *ngFor="let item of items | async" class="item">
         <a [routerLink]="['/items', item.name]">
             <mat-card appearance="outlined">
-                <mat-card-title>{{item.name}} - {{item.price | currency:'USD'}}</mat-card-title>
-                <img mat-card-img src="{{item.url}}">
+                <mat-card-title>{{item.name}}<br>{{item.price}}</mat-card-title>
+                <img mat-card-img src="{{item.img_url}}">
             </mat-card>
         </a>
     </div>

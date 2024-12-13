@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, of } from 'rxjs';
-import { Item } from './items.model';
+import { Item, ItemOverview } from './items.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class ItemsService {
     return this.http.get<Item>(`/api/items/${name}`).pipe(catchError(() => of(null)));
   }
 
-  searchItems(keywords: string): Observable<Item[]> {
-    return this.http.get<Item[]>(`/api/items/search/${keywords}`);
+  searchItems(keywords: string): Observable<ItemOverview[]> {
+    return this.http.get<ItemOverview[]>(`/api/items/search/${keywords}`);
   }
 }

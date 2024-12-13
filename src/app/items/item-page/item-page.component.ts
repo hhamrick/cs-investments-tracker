@@ -40,7 +40,8 @@ export class ItemPageComponent {
   }
 
   getHeldValue(inventory: Inventory, item: Item) {
-    return inventory.stats.total_quantity * item.price;
+    // return inventory.stats.total_quantity * item.price;
+    return 0;
   }
 
   getProfit(inventory: Inventory, item: Item) {

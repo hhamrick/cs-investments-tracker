@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ItemsService } from '../items.service';
-import { Item } from '../items.model';
+import { ItemOverview } from '../items.model';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -19,7 +19,7 @@ export class ItemsPageComponent {
     component: ItemsPageComponent
   }
 
-  public items: Observable<Item[]> = of([]);
+  public items: Observable<ItemOverview[]> = of([]);
 
   constructor(private route: ActivatedRoute, protected itemsService: ItemsService) {
     this.route.params.subscribe(params => {
