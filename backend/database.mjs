@@ -1,7 +1,6 @@
 import { Database } from 'sqlite-async';
 import cliProgress from 'cli-progress';
 import { getCSItems, getItemImgs } from './steam.mjs';
-import { P } from '@angular/cdk/keycodes';
 
 export let db = await Database.open('db.sqlite');
 
@@ -17,17 +16,24 @@ export async function updateAllItems() {
     for (let [name, price] of items) {
         let img_url = imgs[name];
 
-        await db.run(`INSERT OR REPLACE INTO items (name, price, img_url) VALUES (?, ?, ?)`, [name, price, img_url]);
-
-        let parent_name = nameToParentName(name);
-        // parent item needed
-        if (parent_name != name) {
-            await db.run(`INSERT OR REPLACE INTO items (name) VALUES (?)`, [parent_name]);
-            await db.run(`UPDATE items SET parent_name = ? WHERE name = ?`, [parent_name, name]);
-        }
+        let group_name = nameToGroupName(name);
+        await db.run(`INSERT OR REPLACE INTO items (name, price, img_url, group_name) VALUES (?, ?, ?, ?)`, [name, price, img_url, group_name]);
 
         bar.update(++count);
     }
+
+    // remove group_name from all items that are the only item in a group
+    await db.run(`
+        UPDATE items
+        SET group_name = NULL
+        WHERE group_name IN (
+            SELECT group_name
+            FROM items
+            GROUP BY group_name
+            HAVING COUNT(*) = 1
+        );
+    `);
+
     await db.run('COMMIT');
     
     bar.stop();
@@ -36,12 +42,18 @@ export async function updateAllItems() {
     process.stdout.clearLine(1);
 }
 
-function nameToParentName(item_name) {
-    // regex for properties to look for in items that can be split into subitems
-    let stattrak_regex = /^StatTrak™\s*/
+function nameToGroupName(item_name) {
+    // regex for properties to look for in items that can be grouped
+    let stattrak_regex = /StatTrak™\s*/
     let wear_regex = /\s*\(.*\)$/;
+    let sticker_regex = /^Sticker/;
 
-    return item_name.replace(stattrak_regex, '').replace(wear_regex, '');
+    let group_name = item_name.replace(stattrak_regex, '');
+    if (!sticker_regex.test(group_name)) {
+        group_name = group_name.replace(wear_regex, '');
+    }
+
+    return group_name;
 }
 
 export async function getAllItems() {
@@ -50,6 +62,35 @@ export async function getAllItems() {
 
 export async function getItem(name) {
     return await db.get('SELECT * FROM items WHERE name = ?', [name]);
+}
+
+export async function getGroupItem(name) {
+    let item = await db.get(`
+        SELECT name, price, img_url FROM items
+        WHERE name = ? AND group_name IS NULL`,
+        [name]
+    );
+
+    if (item) return item;
+
+    let items = await db.all(`
+        SELECT name, price, img_url FROM items
+        WHERE group_name = ?`,
+        [name]
+    );
+
+    if (items.length == 0) return null;
+    
+    let min_item = items.reduce((low, curr) => curr.price < low.price ? curr : low, items[0]);
+    let max_item = items.reduce((high, curr) => curr.price > high.price ? curr : high, items[0]);
+
+    return {
+        name: name,
+        min_price: min_item.price,
+        max_price: max_item.price,
+        img_url: max_item.img_url,
+        sub_items: items
+    }
 }
 
 export async function getItemNew(name) {
@@ -79,30 +120,42 @@ export async function getItemNew(name) {
 export async function getFilteredItems(keywords) {
     let words = keywords.split(' ');
 
-    let conditions = words.map(word => 'name LIKE ?').join(' AND ');
+    let name_conditions = words.map(word => 'name LIKE ?').join(' AND ');
+    let group_conditions = words.map(word => 'group_name LIKE ?').join(' AND ');
     let values = words.map(word => `%${word}%`);
-    let query = `SELECT name, price, img_url FROM items WHERE ${conditions} AND parent_name IS NULL`;
 
-    let items = await db.all(query, values);
+    // gets items without a group that match keywords
+    // and groups that match search keywords
+    // if group, gets min and max prices and the img_url of the item with the max price 
+    let query = `
+        SELECT
+            name,
+            price,
+            NULL AS max_price,
+            img_url
+        FROM items
+        WHERE ${name_conditions}
+        AND group_name IS NULL
 
+        UNION ALL
 
-    for (let item of items) {
-        if (!item.price) {
-            let sub_items = await db.all(`SELECT * FROM items WHERE parent_name = ?`, [item.name]);
-
-            if (sub_items.length > 0) {
-                let min_item = sub_items.reduce((low, curr) => curr.price < low.price ? curr : low, sub_items[0]);
-                let max_item = sub_items.reduce((high, curr) => curr.price > high.price ? curr : high, sub_items[0]);
-
-                item.price = `$${min_item.price} - $${max_item.price}`;
-                item.img_url = max_item.img_url;
-            }
-        } else {
-            item.price = `$${item.price}`;
-        }
-    }
-
-    return items;
+        SELECT
+            group_name AS name,
+            min(price) AS price,
+            max(price) AS max_price,
+            (
+                SELECT img_url
+                FROM items AS items2
+                WHERE items.group_name = items2.group_name
+                ORDER BY items2.price DESC
+                LIMIT 1
+            ) AS img_url
+        FROM items
+        WHERE ${group_conditions}
+        GROUP BY group_name
+    `;
+    
+    return await db.all(query, [...values, ...values]);
 }
 
 export async function addInvTransaction(user_id, item_name, quantity, price) {

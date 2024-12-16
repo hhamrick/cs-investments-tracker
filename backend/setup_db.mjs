@@ -1,5 +1,5 @@
 import { db } from './database.mjs';
-import { updateAllItems, updateAllItemsNew } from './database.mjs';
+import { updateAllItems } from './database.mjs';
 
 await db.exec(`
     DROP TABLE IF EXISTS items;
@@ -7,8 +7,7 @@ await db.exec(`
         name TEXT PRIMARY KEY,
         price REAL,
         img_url TEXT,
-        parent_name INTEGER,
-        FOREIGN KEY(parent_name) REFERENCES items(name)
+        group_name TEXT
     );
 `);
 
@@ -25,6 +24,6 @@ await db.exec(`
     );
 `);
 
-await updateAllItemsNew();
+await updateAllItems();
 
 db.close();

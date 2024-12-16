@@ -1,12 +1,12 @@
 import express from 'express';
-import { updateAllItems, getItemNew, getFilteredItems } from '../database.mjs';
+import { updateAllItems, getGroupItem, getFilteredItems } from '../database.mjs';
 
 export const items = express.Router();
 
 items.get('/:name', async (req, res) => {
     let name = req.params.name;
 
-    let item = await getItemNew(name);
+    let item = await getGroupItem(name);
 
     if (item) {
         res.send(item);

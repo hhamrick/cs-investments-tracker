@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ItemsService } from '../items.service';
-import { Item } from '../items.model';
+import { Item, ItemGroup } from '../items.model';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
@@ -23,7 +23,7 @@ export class ItemPageComponent {
     component: ItemPageComponent
   }
 
-  public item: Observable<Item | null>;
+  public item: Observable<Item | ItemGroup | null>;
   public itemIsNull: boolean = false;
   public inventory: Observable<Inventory | null> = of(null);
 
@@ -37,6 +37,20 @@ export class ItemPageComponent {
         this.inventory = inventoryService.getTransactions(item.name);
       }
     })
+  }
+
+  toGroup(item: Item | ItemGroup) {
+    if ('sub_items' in item) {
+      return item as ItemGroup;
+    }
+    return null;
+  }
+
+  toItem(item: Item | ItemGroup) {
+    if ('sub_items' in item) {
+      return null
+    }
+    return item as Item;
   }
 
   getHeldValue(inventory: Inventory, item: Item) {
