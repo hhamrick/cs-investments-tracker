@@ -93,30 +93,6 @@ export async function getGroupItem(name) {
     }
 }
 
-export async function getItemNew(name) {
-    let item = await db.get('SELECT * FROM items WHERE name = ?', [name]);
-
-    if (item.parent_name) return null; // cant get subitem directly
-
-    item.sub_items = await db.all(`SELECT * FROM items WHERE parent_name = ?`, [item.name]);
-
-    if (item.sub_items.length > 0) {
-        let min_item = item.sub_items.reduce((low, curr) => curr.price < low.price ? curr : low, item.sub_items[0]);
-        let max_item = item.sub_items.reduce((high, curr) => curr.price > high.price ? curr : high, item.sub_items[0]);
-
-        item.price = `$${min_item.price} - $${max_item.price}`;
-        item.img_url = max_item.img_url;
-    } else {
-        item.price = `$${item.price}`;
-    }
-
-    // remove parent_name
-    delete item.parent_name;
-    item.sub_items.forEach(i => delete i.parent_name)
-    
-    return item;
-}
-
 export async function getFilteredItems(keywords) {
     let words = keywords.split(' ');
 
@@ -159,12 +135,15 @@ export async function getFilteredItems(keywords) {
 }
 
 export async function addInvTransaction(user_id, item_name, quantity, price) {
+    let item = await getItem(item_name);
+    if (item == null) return null;
+
     let res = await db.run(`
-        INSERT INTO inventory (user_id, item_name, quantity, price) VALUES (?, ?, ?, ?)`,
-        [user_id, item_name, quantity, price]
+        INSERT INTO inventory (user_id, item_name, group_name, quantity, price) VALUES (?, ?, ?, ?, ?)`,
+        [user_id, item_name, item.group_name, quantity, price]
     )
 
-    return await db.get(`SELECT id, item_name, quantity, price FROM inventory WHERE id = ?`, [res.lastID]);
+    return await db.get(`SELECT id, item_name, quantity, price FROM inventory WHERE id = ?`, [res.lastID])
 }
 
 export async function deleteInvTransaction(user_id, tranaction_id) {
@@ -177,15 +156,51 @@ export async function deleteInvTransaction(user_id, tranaction_id) {
 }
 
 export async function getTransactions(user_id, item_name) {
-    if (item_name) {
+    if (!item_name) {
         return await db.all(
-            `SELECT id, item_name, quantity, price FROM inventory WHERE user_id = ? AND item_name = ? ORDER BY time DESC`,
-            [user_id, item_name]
+            `SELECT id, item_name, quantity, price
+            FROM inventory
+            WHERE user_id = ?
+            ORDER BY time DESC`,
+            [user_id]
         );
     }
 
-    return await db.all(
-        `SELECT id, item_name, quantity, price FROM inventory WHERE user_id = ? ORDER BY time DESC`,
+    let group_items = await db.all(`
+        SELECT id, item_name, quantity, price
+        FROM inventory
+        WHERE user_id = ? AND group_name = ?
+        ORDER BY time DESC`,
+        [user_id, item_name]
+    );
+
+    console.log(group_items);
+
+    if (group_items.length > 0) return group_items;
+
+    return await db.all(`
+        SELECT id, item_name, quantity, price, group_name
+        FROM inventory
+        WHERE user_id = ? AND item_name = ?
+        ORDER BY time DESC`,
+        [user_id, item_name]
+    );
+}
+
+export async function getInventory(user_id) {
+    return await db.all(`
+        SELECT
+            item_name,
+            sum(quantity) AS total_quantity,
+            (
+                SELECT price
+                FROM items
+                WHERE name = item_name
+                LIMIT 1
+            ) AS price
+        FROM inventory
+        WHERE user_id = ?
+        GROUP BY item_name`,
         [user_id]
     );
 }

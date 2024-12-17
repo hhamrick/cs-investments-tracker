@@ -18,6 +18,10 @@ import { NewTransactionDialogComponent } from '../new-transaction-dialog/new-tra
 })
 export class TransactionTableComponent implements OnInit, AfterViewInit {
   transactions = input.required<Transaction[]>();
+  is_group = input<boolean>();
+  no_buttons = input<boolean>();
+
+  displayed_col = ['buysell', 'price', 'quantity', 'total', 'actions'];
   showPaginator = computed(() => this.transactions().length > 5);
   dataSource = new MatTableDataSource<Transaction>();
 
@@ -27,6 +31,12 @@ export class TransactionTableComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.dataSource.data = this.transactions();
+    if (this.no_buttons()) {
+      this.displayed_col.pop();
+    }
+    if (this.is_group()) {
+      this.displayed_col.splice(1, 0, 'name');
+    }
   }
 
   ngAfterViewInit() {

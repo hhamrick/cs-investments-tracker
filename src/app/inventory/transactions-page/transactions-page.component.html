@@ -1,0 +1,5 @@
+<div *ngIf="inventory | async as inventory">        
+    <mat-card appearance="outlined" class="table">
+        <app-transaction-table [transactions]="inventory.transactions" [is_group]="true" [no_buttons]="true" />
+    </mat-card>
+</div>

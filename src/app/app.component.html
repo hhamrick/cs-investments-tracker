@@ -6,7 +6,7 @@
     </mat-form-field>
     <nav class="right">
         <button mat-button routerLink="/">Home</button>
-        <button mat-button routerLink="/items">Items</button>
+        <button mat-button routerLink="/transactions">Transactions</button>
         <button *ngIf="!(user | async)" mat-button (click)="login()">Login</button>
         <button *ngIf="user | async as user" mat-icon-button [matMenuTriggerFor]="menu" class="avatar">
             <img src="{{user.avatar}}">
