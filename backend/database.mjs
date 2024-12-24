@@ -71,11 +71,18 @@ export async function getGroupItem(name) {
         [name]
     );
 
-    if (item) return item;
+    if (item) return {
+        name: item.name,
+        price: item.price,
+        max_price: null,
+        img_url: item.img_url,
+        sub_items: []
+    };
 
     let items = await db.all(`
         SELECT name, price, img_url FROM items
-        WHERE group_name = ?`,
+        WHERE group_name = ?
+        ORDER BY price DESC`,
         [name]
     );
 
@@ -86,7 +93,7 @@ export async function getGroupItem(name) {
 
     return {
         name: name,
-        min_price: min_item.price,
+        price: min_item.price,
         max_price: max_item.price,
         img_url: max_item.img_url,
         sub_items: items
@@ -129,18 +136,17 @@ export async function getFilteredItems(keywords) {
         FROM items
         WHERE ${group_conditions}
         GROUP BY group_name
+
+        ORDER BY name
     `;
     
     return await db.all(query, [...values, ...values]);
 }
 
 export async function addInvTransaction(user_id, item_name, quantity, price) {
-    let item = await getItem(item_name);
-    if (item == null) return null;
-
     let res = await db.run(`
-        INSERT INTO inventory (user_id, item_name, group_name, quantity, price) VALUES (?, ?, ?, ?, ?)`,
-        [user_id, item_name, item.group_name, quantity, price]
+        INSERT INTO inventory (user_id, item_name, quantity, price) VALUES (?, ?, ?, ?)`,
+        [user_id, item_name, quantity, price]
     )
 
     return await db.get(`SELECT id, item_name, quantity, price FROM inventory WHERE id = ?`, [res.lastID])
@@ -166,18 +172,28 @@ export async function getTransactions(user_id, item_name) {
         );
     }
 
-    let group_items = await db.all(`
-        SELECT id, item_name, quantity, price
-        FROM inventory
-        WHERE user_id = ? AND group_name = ?
-        ORDER BY time DESC`,
-        [user_id, item_name]
+    let items_in_group = await db.all(`
+        SELECT name FROM items
+        WHERE group_name = ?`,
+        [item_name]
     );
 
-    if (group_items.length > 0) return group_items;
+    // item_name is a group
 
+    if (items_in_group.length > 0) {
+        let placeholders = items_in_group.map(() => '?').join(', ');
+        return await db.all(`
+            SELECT id, item_name, quantity, price
+            FROM inventory
+            WHERE user_id = ? AND item_name IN (${placeholders})    
+            ORDER BY time DESC`,
+            [user_id, ...items_in_group.map(item => item.name)]
+        );
+    }
+
+    // item_name is a single item
     return await db.all(`
-        SELECT id, item_name, quantity, price, group_name
+        SELECT id, item_name, quantity, price
         FROM inventory
         WHERE user_id = ? AND item_name = ?
         ORDER BY time DESC`,
@@ -189,7 +205,7 @@ export async function getInventory(user_id) {
     return await db.all(`
         SELECT
             inventory.item_name AS name,
-            inventory.group_name,
+            group_name,
             sum(inventory.quantity) AS quantity,
             items.price AS price,
             items.img_url AS img_url

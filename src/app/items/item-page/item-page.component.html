@@ -1,67 +1,40 @@
-<div *ngIf="item | async as itemgroup">
-    <!-- ItemGroup -->
-    <div *ngIf="toGroup(itemgroup) as group; else notGroup">
-
+<div *ngIf="item | async as item">
         <mat-card appearance="outlined" class="item">
-            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="0ms">
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="0ms" *ngIf="isGroup(item); else notGroup">
                 <mat-tab label="Overview">
                     <mat-card-title>
-                        {{group.name}}<br>
-                        {{group.min_price | currency:'USD'}} - {{group.max_price | currency:'USD'}}
+                        {{item.name}}<br>
+                        {{item.price | currency:'USD'}} - {{item.max_price | currency:'USD'}}
                     </mat-card-title>
-                    <img mat-card-img src="{{group.img_url}}">
+                    <img mat-card-img src="{{item.img_url}}">
                 </mat-tab>
                 <mat-tab label="Sub-items">
-                    <mat-card-subtitle *ngFor="let sub_item of group.sub_items">
+                    <mat-card-subtitle *ngFor="let sub_item of item.sub_items">
                         {{sub_item.name}} - {{sub_item.price | currency:'USD'}}
                     </mat-card-subtitle>
                 </mat-tab>
             </mat-tab-group>
-            
+
+            <ng-template #notGroup>
+                <mat-card-title>
+                    {{item.name}}<br>
+                    {{item.price | currency:'USD'}}
+                </mat-card-title>
+                <img mat-card-img src="{{item.img_url}}">
+            </ng-template>
         </mat-card>
 
         <div *ngIf="inventory | async as inventory">        
             <mat-card appearance="outlined" class="table">
-                <app-transaction-table [transactions]="inventory.transactions" [items]="group.sub_items" />
+                <app-transaction-table [transactions]="inventory.transactions" [items]="getItems(item)" />
             </mat-card>
 
             <mat-card appearance="outlined" class="stats">
-                <mat-card-subtitle>Held Quantity: {{inventory.stats.total_quantity}}</mat-card-subtitle>
-                <mat-card-subtitle>Average Price: {{inventory.stats.avg_price | currency:'USD'}}</mat-card-subtitle>
-                <!-- <mat-card-subtitle>Held Value: {{getHeldValue(inventory, item) | currency:'USD'}}</mat-card-subtitle> -->
-                <mat-card-subtitle>Total Spent: {{inventory.stats.total_spent | currency:'USD'}}</mat-card-subtitle>
-                <mat-card-subtitle>Total Sold: {{-inventory.stats.total_sold | currency:'USD'}}</mat-card-subtitle>
-                <!-- <mat-card-subtitle>Profit: {{getProfit(inventory, item) | currency:'USD'}} ({{getProfitPercent(inventory, item) | percent:'1.2'}})</mat-card-subtitle> -->
+                <mat-card-subtitle *ngFor="let stat of getStatEntries(inventory)">
+                    {{stat[0]}}: {{stat[1]}}
+                </mat-card-subtitle>
             </mat-card>
         </div>
-
-    </div>
-    <ng-template #notGroup>
-    <!-- Item -->
-    <div *ngIf="toItem(itemgroup) as item">
-
-        <mat-card appearance="outlined" class="item">
-            <mat-card-title>{{item.name}} - {{item.price | currency:'USD'}}</mat-card-title>
-            <img mat-card-img src="{{item.img_url}}">
-        </mat-card>
-    
-        <div *ngIf="inventory | async as inventory">        
-            <mat-card appearance="outlined" class="table">
-                <app-transaction-table [transactions]="inventory.transactions" [items]="[item]"/>
-            </mat-card>
-
-            <mat-card appearance="outlined" class="stats">
-                <mat-card-subtitle>Held Quantity: {{inventory.stats.total_quantity}}</mat-card-subtitle>
-                <mat-card-subtitle>Average Price: {{inventory.stats.avg_price | currency:'USD'}}</mat-card-subtitle>
-                <mat-card-subtitle>Held Value: {{getHeldValue(inventory, item) | currency:'USD'}}</mat-card-subtitle>
-                <mat-card-subtitle>Total Spent: {{inventory.stats.total_spent | currency:'USD'}}</mat-card-subtitle>
-                <mat-card-subtitle>Total Sold: {{-inventory.stats.total_sold | currency:'USD'}}</mat-card-subtitle>
-                <mat-card-subtitle>Profit: {{getProfit(inventory, item) | currency:'USD'}} ({{getProfitPercent(inventory, item) | percent:'1.2'}})</mat-card-subtitle>
-            </mat-card>
-        </div>
-
-    </div>
-    </ng-template>
 </div>
 
 <app-not-found-page *ngIf="itemIsNull" />

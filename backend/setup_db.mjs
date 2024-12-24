@@ -17,7 +17,6 @@ await db.exec(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         item_name TEXT,
-        group_name TEXT,
         quantity INTEGER,
         price REAL,
         time TXT DEFAULT (datetime('now')),

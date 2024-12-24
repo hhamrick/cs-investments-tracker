@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ItemsService } from '../items.service';
-import { Item, ItemGroup } from '../items.model';
+import { ItemGroup } from '../items.model';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
@@ -22,9 +22,9 @@ export class ItemPageComponent {
     path: 'items/:name',
     title: 'Item',
     component: ItemPageComponent
-  }
+  };
 
-  public item: Observable<Item | ItemGroup | null>;
+  public item: Observable<ItemGroup | null>;
   public itemIsNull: boolean = false;
   public inventory: Observable<Inventory | null> = of(null);
 
@@ -40,32 +40,27 @@ export class ItemPageComponent {
     })
   }
 
-  toGroup(item: Item | ItemGroup) {
-    if ('sub_items' in item) {
-      let group = item as ItemGroup;
-      group.sub_items.sort((a, b) => b.price - a.price);
-      return item as ItemGroup;
+  isGroup(item: ItemGroup) {
+    return item.sub_items.length > 0;
+  }
+
+  getStatEntries(inventory: Inventory) {
+    let entries = Object.entries(inventory.stats).map(([key, value]) => [this.statNameFormat(key), value]);
+    return entries;
+  }
+
+  statNameFormat(stat: string) {
+    return stat.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  getItems(item: ItemGroup) {
+    if (item.sub_items.length == 0) {
+      return [{
+        name: item.name,
+        price: item.price,
+        img_url: item.img_url
+      }];
     }
-    return null;
-  }
-
-  toItem(item: Item | ItemGroup) {
-    if ('sub_items' in item) {
-      return null
-    }
-    return item as Item;
-  }
-
-  getHeldValue(inventory: Inventory, item: Item) {
-    // return inventory.stats.total_quantity * item.price;
-    return 0;
-  }
-
-  getProfit(inventory: Inventory, item: Item) {
-    return this.getHeldValue(inventory, item) - inventory.stats.total_sold - inventory.stats.total_spent;
-  }
-
-  getProfitPercent(inventory: Inventory, item: Item) {
-    return this.getProfit(inventory, item) / inventory.stats.total_spent;
+    return item.sub_items;
   }
 }

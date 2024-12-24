@@ -7,10 +7,10 @@ export interface ItemOverview {
 
 export interface ItemGroup {
     name: string;
-    min_price: number;
-    max_price: number;
+    price: number;
+    max_price: number | null;
     img_url: string;
-    sub_items: Item[]
+    sub_items: Item[];
 }
 
 export interface Item {
