@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
-import { Inventory, Transaction } from './inventory.model';
+import { Inventory, InventoryItem, Transaction } from './inventory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +26,9 @@ export class InventoryService {
       return this.http.get<Inventory>(`api/inventory/transactions?item=${item_name}`).pipe(catchError(() => of(null)));
     }
     return this.http.get<Inventory>('api/inventory/transactions').pipe(catchError(() => of(null)));
+  }
+
+  getInventory(): Observable<InventoryItem[]> {
+    return this.http.get<InventoryItem[]>('api/inventory').pipe(catchError(() => of([])));
   }
 }

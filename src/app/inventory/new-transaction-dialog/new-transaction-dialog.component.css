@@ -1,7 +1,21 @@
 mat-dialog-content {
     display: flex;
     flex-direction: column;
-    width: 200px;
+    width: 500px;
     margin: 0 auto;
     margin-top: 20px;
+}
+
+.item-select {
+    width: 100%;
+}
+
+.inputs {
+    display: flex;
+    gap: 10px
+}
+
+.inputs mat-form-field {
+    flex: 1;
+    min-width: 0;
 }

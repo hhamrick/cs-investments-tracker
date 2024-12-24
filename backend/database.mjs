@@ -174,8 +174,6 @@ export async function getTransactions(user_id, item_name) {
         [user_id, item_name]
     );
 
-    console.log(group_items);
-
     if (group_items.length > 0) return group_items;
 
     return await db.all(`
@@ -190,17 +188,15 @@ export async function getTransactions(user_id, item_name) {
 export async function getInventory(user_id) {
     return await db.all(`
         SELECT
-            item_name,
-            sum(quantity) AS total_quantity,
-            (
-                SELECT price
-                FROM items
-                WHERE name = item_name
-                LIMIT 1
-            ) AS price
+            inventory.item_name AS name,
+            inventory.group_name,
+            sum(inventory.quantity) AS quantity,
+            items.price AS price,
+            items.img_url AS img_url
         FROM inventory
-        WHERE user_id = ?
-        GROUP BY item_name`,
+        JOIN items ON items.name = inventory.item_name
+        WHERE inventory.user_id = ?
+        GROUP BY inventory.item_name`,
         [user_id]
     );
 }

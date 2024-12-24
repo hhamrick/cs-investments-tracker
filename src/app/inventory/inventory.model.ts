@@ -16,3 +16,11 @@ export interface Inventory {
     stats: Stats;
     transactions: Transaction[];
 }
+
+export interface InventoryItem {
+    name: string;
+    group_name: string;
+    quantity: number;
+    price: number;
+    img_url: string;
+}

@@ -19,6 +19,7 @@ inventory.use(passport.session());
 
             if (result == null) {
                 res.status(404).send('Invalid item.');
+                return;
             }
             res.send(result);
     });

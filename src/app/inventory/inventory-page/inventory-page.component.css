@@ -1,0 +1,18 @@
+mat-card {
+    width: 70%;
+    margin: 0 auto;
+}
+
+table {
+    border-radius: 30px;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+img {
+    height: 40px;
+}
+
+.mat-column-image {
+    width: 0px;
+}

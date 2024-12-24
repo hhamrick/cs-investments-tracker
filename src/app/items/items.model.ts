@@ -15,6 +15,6 @@ export interface ItemGroup {
 
 export interface Item {
     name: string;
-    price: string;
+    price: number;
     img_url: string;
 }

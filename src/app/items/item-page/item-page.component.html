@@ -3,16 +3,26 @@
     <div *ngIf="toGroup(itemgroup) as group; else notGroup">
 
         <mat-card appearance="outlined" class="item">
-            <mat-card-title>
-                {{group.name}}<br>
-                {{group.min_price | currency:'USD'}} - {{group.max_price | currency:'USD'}}
-            </mat-card-title>
-            <img mat-card-img src="{{group.img_url}}">
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="0ms">
+                <mat-tab label="Overview">
+                    <mat-card-title>
+                        {{group.name}}<br>
+                        {{group.min_price | currency:'USD'}} - {{group.max_price | currency:'USD'}}
+                    </mat-card-title>
+                    <img mat-card-img src="{{group.img_url}}">
+                </mat-tab>
+                <mat-tab label="Sub-items">
+                    <mat-card-subtitle *ngFor="let sub_item of group.sub_items">
+                        {{sub_item.name}} - {{sub_item.price | currency:'USD'}}
+                    </mat-card-subtitle>
+                </mat-tab>
+            </mat-tab-group>
+            
         </mat-card>
 
         <div *ngIf="inventory | async as inventory">        
             <mat-card appearance="outlined" class="table">
-                <app-transaction-table [transactions]="inventory.transactions" [is_group]="true" />
+                <app-transaction-table [transactions]="inventory.transactions" [items]="group.sub_items" />
             </mat-card>
 
             <mat-card appearance="outlined" class="stats">
@@ -31,13 +41,13 @@
     <div *ngIf="toItem(itemgroup) as item">
 
         <mat-card appearance="outlined" class="item">
-            <mat-card-title>{{item.name}} - {{item.price}}</mat-card-title>
+            <mat-card-title>{{item.name}} - {{item.price | currency:'USD'}}</mat-card-title>
             <img mat-card-img src="{{item.img_url}}">
         </mat-card>
     
         <div *ngIf="inventory | async as inventory">        
             <mat-card appearance="outlined" class="table">
-                <app-transaction-table [transactions]="inventory.transactions" />
+                <app-transaction-table [transactions]="inventory.transactions" [items]="[item]"/>
             </mat-card>
 
             <mat-card appearance="outlined" class="stats">

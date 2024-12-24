@@ -1,5 +1,6 @@
 mat-card {
     width: 50%;
+    min-width: 600px;
     margin: 0 auto;
 }
 
@@ -13,7 +14,16 @@ mat-card {
     margin-top: 40px;
 }
 
+.table {
+    overflow: hidden;
+}
+
 img {
-    width: 30%;
+    width: 40%;
     margin-top: 20px;
+}
+
+mat-tab-group {
+    display: flex;
+    flex-direction: column-reverse;
 }

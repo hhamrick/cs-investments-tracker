@@ -9,10 +9,11 @@ import { InventoryService } from '../../inventory/inventory.service';
 import { Inventory } from '../../inventory/inventory.model';
 import { TransactionTableComponent } from "../../inventory/transaction-table/transaction-table.component";
 import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs'
 
 @Component({
   selector: 'app-item-page',
-  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule],
+  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule, MatTabsModule],
   templateUrl: './item-page.component.html',
   styleUrl: './item-page.component.css'
 })
@@ -41,6 +42,8 @@ export class ItemPageComponent {
 
   toGroup(item: Item | ItemGroup) {
     if ('sub_items' in item) {
+      let group = item as ItemGroup;
+      group.sub_items.sort((a, b) => b.price - a.price);
       return item as ItemGroup;
     }
     return null;
