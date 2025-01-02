@@ -4,6 +4,8 @@
             <mat-card appearance="outlined">
                 <mat-card-title>
                     {{item.name}}<br>
+                </mat-card-title>
+                <mat-card-title>
                     {{item.price | currency:'USD'}}
                     <span *ngIf="item.max_price"> - {{item.max_price | currency:'USD'}}</span>
                 </mat-card-title>
