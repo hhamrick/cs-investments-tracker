@@ -19,3 +19,13 @@ mat-dialog-content {
     flex: 1;
     min-width: 0;
 }
+
+.inputs mat-button-toggle-group {
+    margin-top: 8px;
+    height: 39px;
+    border-radius: 5px;
+}
+
+.inputs mat-button-toggle {
+    align-content: center;
+}

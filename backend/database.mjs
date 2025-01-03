@@ -5,8 +5,19 @@ import { getCSItems, getItemImgs } from './steam.mjs';
 export let db = await Database.open('db.sqlite');
 
 export async function updateAllItems() {
-    let items = Object.entries(await getCSItems());
+    let items = await getCSItems();
+    if (!items) {
+        console.log('Error with the Items API');
+        return;
+    }
+
     let imgs = await getItemImgs();
+    if (!imgs) {
+        console.log('Error with the Images API');
+        return;
+    }
+    
+    items = Object.entries(items);
 
     let count = 0;
     let bar = new cliProgress.SingleBar({}, cliProgress.Presets.rect);
