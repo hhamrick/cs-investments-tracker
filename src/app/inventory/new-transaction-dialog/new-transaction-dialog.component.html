@@ -1,5 +1,8 @@
-<h2 mat-dialog-title *ngIf="items.length <= 1">{{items[0].name}}</h2>
+<h2 mat-dialog-title>Create a New Transaction</h2>
+
 <mat-dialog-content>
+    <h3 *ngIf="items.length == 1">{{items[0].name}} - {{items[0].price | currency:'USD'}}</h3>
+
     <mat-form-field *ngIf="items.length > 1" class="item-select">
         <mat-label>Item</mat-label>
         <mat-select [(ngModel)]="selectedItem" name="item">
@@ -23,9 +26,11 @@
         <mat-form-field>
             <mat-label>Price</mat-label>
             <input matInput type="number" [(ngModel)]="price" />
+            <span matTextPrefix>$&nbsp;</span>
         </mat-form-field>
     </div>
 </mat-dialog-content>
+
 <mat-dialog-actions>
     <button mat-button (click)="create()">Create</button>
     <button mat-button mat-dialog-close>Close</button>

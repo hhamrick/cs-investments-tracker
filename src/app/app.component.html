@@ -4,12 +4,11 @@
         <mat-icon matPrefix>search</mat-icon>
         <input matInput [(ngModel)]="searchTxt" (keydown.enter)="search()" />
     </mat-form-field>
-    <nav class="right">
+    <nav *ngIf="user | async as user; else notLoggedIn" class="right">
         <button mat-button routerLink="/">Home</button>
         <button mat-button routerLink="/transactions">Transactions</button>
         <button mat-button routerLink="/inventory">Inventory</button>
-        <button *ngIf="!(user | async)" mat-button (click)="login()">Login</button>
-        <button *ngIf="user | async as user" mat-icon-button [matMenuTriggerFor]="menu" class="avatar">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="avatar">
             <img src="{{user.avatar}}">
         </button>
         <mat-menu #menu="matMenu" xPosition="before">
@@ -19,6 +18,15 @@
             </button>
         </mat-menu>
     </nav>
+
+    <ng-template #notLoggedIn>
+        <button mat-button *ngIf="!isHome" (click)="login()" class="right login">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M14.3174 9.00573C12.8957 9.00573 11.7423 7.84724 11.7423 6.41723C11.7423 4.98722 12.8957 3.82741 14.3174 3.82741C15.7404 3.82741 16.8944 4.98722 16.8944 6.41723C16.8944 7.84724 15.7404 9.00573 14.3174 9.00573ZM14.3122 9.86987C12.4216 9.86987 10.883 8.32304 10.883 6.42245C10.883 4.52316 12.4216 2.97632 14.3122 2.97632C16.2028 2.97632 17.742 4.52316 17.742 6.42245C17.742 8.32304 16.2028 9.86987 14.3122 9.86987ZM8.36964 16.2158C7.7533 17.6987 6.05431 18.4029 4.57744 17.7855C3.89616 17.5003 3.38179 16.9788 3.08498 16.3568L4.76059 17.0539C5.84973 17.5094 7.09929 16.9912 7.55197 15.8986C8.00594 14.8054 7.49092 13.5497 6.40242 13.0941L4.67031 12.3742C5.33861 12.1196 6.09848 12.1105 6.80834 12.4068C7.52404 12.7057 8.07933 13.2677 8.37353 13.9869C8.66839 14.7062 8.66709 15.4992 8.36964 16.2158ZM9.17687 6.43308C9.17687 6.45592 9.16457 6.46813 9.16587 6.48967L5.84973 11.3221C5.31263 11.2986 4.77358 11.3926 4.26245 11.604C4.03709 11.6961 3.82602 11.8096 3.62793 11.9402C3.62793 11.9402 1.21101 10.9361 0.00255202 10.4341C0.00255202 10.4341 0.0012045 10.4341 0.00255202 13.1712C0.00349277 15.0821 0.00349277 15.0821 0.00349277 15.0821C0.682314 15.3641 2.02766 15.9176 2.02766 15.9176C2.28615 17.0754 3.07849 18.0923 4.24752 18.5811C6.16017 19.3833 8.36509 18.4695 9.16133 16.5493C9.36786 16.0481 9.46462 15.5214 9.45034 14.996L14.1953 11.5942C14.2343 11.5955 14.2732 11.5962 14.3122 11.5962C17.151 11.5962 19.4592 9.27464 19.4592 6.42245C19.4592 3.57026 17.151 1.25 14.3122 1.25C11.4734 1.25 9.17687 3.58089 9.17687 6.43308Z" fill="white" />
+            </svg>
+            Sign in with Steam
+        </button>
+    </ng-template>
 </mat-toolbar>
 
 <div class="content">

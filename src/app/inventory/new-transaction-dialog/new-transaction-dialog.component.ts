@@ -30,7 +30,7 @@ export class NewTransactionDialogComponent {
   }
 
   create() {
-    if (this.selectedItem == '' || this.quantity == 0 || this.price == 0) {
+    if (this.quantity == 0 || this.price == 0) {
       return;
     }
 
@@ -38,6 +38,9 @@ export class NewTransactionDialogComponent {
       if (this.items.length == 1) {
         this.inventoryService.postTransaction(this.items[0].name, Math.round(this.quantity) * this.quantityMult(), Math.round(this.price * 100) / 100).subscribe();
       } else {
+        if (this.selectedItem == '') {
+          return;
+        }
         this.inventoryService.postTransaction(this.selectedItem, Math.round(this.quantity) * this.quantityMult(), Math.round(this.price * 100) / 100).subscribe();
       }
     }

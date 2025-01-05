@@ -29,3 +29,7 @@ mat-dialog-content {
 .inputs mat-button-toggle {
     align-content: center;
 }
+
+h2, h3 {
+    text-align: center;
+}

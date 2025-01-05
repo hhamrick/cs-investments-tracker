@@ -21,9 +21,13 @@ export class AppComponent {
   title = 'cs-investments-tracker';
   user: Observable<User | null>;
   public searchTxt = "";
+  isHome = false;
 
   constructor(protected router: Router, protected userService: UserService) {
     this.user = userService.getCurrentUser();
+    this.router.events.subscribe(() => {
+      this.isHome = this.router.url == '/';
+    });
   }
 
   login() {
@@ -32,7 +36,7 @@ export class AppComponent {
 
   logout() {
     this.userService.logout().subscribe(() => {
-      this.user = of(null);
+      window.location.reload();
     });
   }
 
