@@ -21,9 +21,13 @@ export class HomePageComponent {
   }
 
   inventory: Observable<Inventory  | null>;
+  invIsNull: boolean = false;
 
   constructor(private inventoryService: InventoryService, private userService: UserService) {
     this.inventory = inventoryService.getTransactions();
+    this.inventory.subscribe((inv) => {
+      if (inv == null) this.invIsNull = true;
+    });
   }
 
   login() {
