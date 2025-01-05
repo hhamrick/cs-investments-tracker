@@ -9,8 +9,8 @@ auth.use(passport.initialize());
 auth.use(passport.session());
 
 passport.use(new SteamStrategy({
-        returnURL: 'http://localhost:3000/auth/login/return',
-        realm: 'http://localhost:3000/',
+        returnURL: process.env.BACKENDURL + 'auth/login/return',
+        realm: process.env.BACKENDURL,
         apiKey: process.env.STEAMAPIKEY 
     },
     function(identifier, profile, done) {
@@ -38,7 +38,7 @@ auth.get('/login', checkAuth);
 auth.get('/login/return', 
     checkAuth, 
     (req, res) => {
-        res.redirect('http://localhost:4200/');
+        res.redirect(process.env.FRONTENDURL);
     });
 
 auth.delete('/logout', (req, res, next) => {
