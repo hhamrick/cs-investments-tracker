@@ -1,6 +1,7 @@
+#!/home/hbhlaxman/.nvm/versions/node/v23.5.0/bin/node
 import express from 'express';
 import cors from 'cors';
-import session from 'express-session';
+import session from 'cookie-session';
 import 'dotenv/config';
 import { updateAllItems } from './database.mjs';
 // routes
@@ -17,7 +18,8 @@ app.use(express.json());
 app.use(session({
     secret: process.env.SESSIONSECRET,
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    maxAge: 24 * 60 * 60 * 1000
 }));
 
 // setup routes

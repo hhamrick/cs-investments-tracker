@@ -42,10 +42,12 @@ auth.get('/login/return',
     });
 
 auth.delete('/logout', (req, res, next) => {
-    req.logout(err => {
-        if (err) return next(err);
-        res.send();
-    })
+    // req.logout(err => {
+    //     if (err) return next(err);
+    //     res.send();
+    // })
+    req.session = null;
+    res.send();
 });
 
 auth.get('/user', (req, res) => {
