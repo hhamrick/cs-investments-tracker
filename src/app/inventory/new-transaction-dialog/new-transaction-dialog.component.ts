@@ -17,8 +17,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
   styleUrl: './new-transaction-dialog.component.css'
 })
 export class NewTransactionDialogComponent {
-  quantity = 0;
-  price = 0;
+  quantity = 1;
+  price;
   selectedItem = '';
   buysell = 'buy';
 
@@ -27,6 +27,7 @@ export class NewTransactionDialogComponent {
 
   constructor(private inventoryService: InventoryService) {
     this.items = this.data.items;
+    this.price = this.items.length > 0 ? this.items[0].price : 0;
   }
 
   create() {
