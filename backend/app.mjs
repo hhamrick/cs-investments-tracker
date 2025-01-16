@@ -1,4 +1,4 @@
-#!/home/hbhlaxman/.nvm/versions/node/v23.5.0/bin/node
+#!/home/hbhlaxman/.nvm/versions/node/v22.12.0/bin/node
 import express from 'express';
 import cors from 'cors';
 import session from 'cookie-session';
