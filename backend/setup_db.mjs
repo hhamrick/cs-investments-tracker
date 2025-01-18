@@ -39,6 +39,17 @@ async function setup() {
             FOREIGN KEY(item_name) REFERENCES items(name)
         );
     `);
+
+    await db.exec(`
+        DROP TABLE IF EXISTS tags;
+        CREATE TABLE tags(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            item_name TEXT,
+            tag_name TEXT,
+            FOREIGN KEY(item_name) REFERENCES items(name)
+        );
+    `);
     
     await updateAllItems();
     
