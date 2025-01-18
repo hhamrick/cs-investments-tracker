@@ -1,18 +1,15 @@
 @use '@angular/material' as mat;
 
-.content, .header {
+.header {
+    position: fixed;
+    top: 0;
+    z-index: 1000;
     padding: 0 20px;
 }
 
 .content {
     transform: translateY(64px);
-    padding-top: 10px;
-}
-
-.header {
-    position: fixed;
-    top: 0;
-    z-index: 1000;
+    padding: 20px;
 }
 
 .center {

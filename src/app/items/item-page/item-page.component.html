@@ -1,40 +1,65 @@
 <div *ngIf="item | async as item">
-        <mat-card appearance="outlined" class="item">
-            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="0ms" *ngIf="isGroup(item); else notGroup">
-                <mat-tab label="Overview">
-                    <mat-card-title>
-                        {{item.name}}<br>
-                        {{item.price | currency:'USD'}} - {{item.max_price | currency:'USD'}}
-                    </mat-card-title>
-                    <img mat-card-img src="{{item.img_url}}">
-                </mat-tab>
-                <mat-tab label="Sub-items">
-                    <mat-card-subtitle *ngFor="let sub_item of item.sub_items">
-                        {{sub_item.name}} - {{sub_item.price | currency:'USD'}}
-                    </mat-card-subtitle>
-                </mat-tab>
-            </mat-tab-group>
-
-            <ng-template #notGroup>
+    <mat-card appearance="outlined" class="item">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="0ms" *ngIf="isGroup(item); else notGroup">
+            <mat-tab label="Overview">
                 <mat-card-title>
                     {{item.name}}<br>
-                    {{item.price | currency:'USD'}}
+                    {{item.price | currency:'USD'}} - {{item.max_price | currency:'USD'}}
                 </mat-card-title>
                 <img mat-card-img src="{{item.img_url}}">
-            </ng-template>
+            </mat-tab>
+            <mat-tab label="Sub-items">
+                <mat-card-subtitle *ngFor="let sub_item of item.sub_items">
+                    {{sub_item.name}} - {{sub_item.price | currency:'USD'}}
+                </mat-card-subtitle>
+            </mat-tab>
+        </mat-tab-group>
+
+        <ng-template #notGroup>
+            <mat-card-title>
+                {{item.name}}<br>
+                {{item.price | currency:'USD'}}
+            </mat-card-title>
+            <img mat-card-img src="{{item.img_url}}">
+        </ng-template>
+    </mat-card>
+
+    <div *ngIf="inventory | async as inventory">        
+        <mat-card appearance="outlined" class="table">
+            <app-transaction-table [transactions]="inventory.transactions" [items]="getItems(item)" />
         </mat-card>
 
-        <div *ngIf="inventory | async as inventory">        
-            <mat-card appearance="outlined" class="table">
-                <app-transaction-table [transactions]="inventory.transactions" [items]="getItems(item)" />
-            </mat-card>
+        <mat-card appearance="outlined" class="stats">
+            <mat-card-subtitle *ngFor="let stat of getStatEntries(inventory)">
+                {{stat[0]}}: {{stat[1]}}
+            </mat-card-subtitle>
+        </mat-card>
+    </div>
 
-            <mat-card appearance="outlined" class="stats">
-                <mat-card-subtitle *ngFor="let stat of getStatEntries(inventory)">
-                    {{stat[0]}}: {{stat[1]}}
-                </mat-card-subtitle>
-            </mat-card>
-        </div>
+    <div *ngIf="tags">
+        <mat-card appearance="outlined" class="tags">
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" [floatLabel]="tags.length ? 'auto' : 'always'">
+                <mat-label>Tags</mat-label>
+                <mat-chip-grid #chipGrid>
+                    @for (tag of tags; track tag) {
+                        <mat-chip-row (removed)="deleteTag(tag)">
+                            {{tag.tag_name}}
+                            <button matChipRemove>
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        </mat-chip-row>
+                    }
+                    <input
+                        placeholder="New tag..."
+                        [matChipInputFor]="chipGrid"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        [matChipInputAddOnBlur]="true"
+                        (matChipInputTokenEnd)="addTag(item, $event)"
+                    />
+                </mat-chip-grid>
+            </mat-form-field>
+        </mat-card>
+    </div>
 </div>
 
 <app-not-found-page *ngIf="itemIsNull" />

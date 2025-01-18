@@ -229,12 +229,27 @@ export async function getInventory(user_id) {
 }
 
 export async function addTag(user_id, item_name, tag_name) {
+    let item = await db.get(`
+        SELECT name FROM items
+        WHERE name = ? AND group_name IS NULL`,
+        [item_name]
+    );
+    if (!item) {
+        let items = await db.all(`
+            SELECT name FROM items
+            WHERE group_name = ?`,
+            [item_name]
+        );
+        if (items.length < 1) return null;
+    }
+    
+
     let res = await db.run(`
         INSERT INTO tags (user_id, item_name, tag_name) VALUES (?, ?, ?)`,
         [user_id, item_name, tag_name]
     );
 
-    return await db.get(`SELECT * FROM tags WHERE id = ?`, [res.lastID]);
+    return await db.get(`SELECT id, item_name, tag_name FROM tags WHERE id = ?`, [res.lastID]);
 }
 
 export async function deleteTag (user_id, tag_id) {
@@ -248,7 +263,7 @@ export async function deleteTag (user_id, tag_id) {
 
 export async function getTags (user_id, item_name) {
     return await db.all(`
-        SELECT id, tag_name FROM tags WHERE user_id = ? AND item_name = ?`,
+        SELECT id, item_name, tag_name FROM tags WHERE user_id = ? AND item_name = ?`,
         [user_id, item_name]
     );
 }

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ItemsService } from '../items.service';
-import { ItemGroup } from '../items.model';
-import { Observable, of } from 'rxjs';
+import { Item, ItemGroup } from '../items.model';
+import { filter, map, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
 import { InventoryService } from '../../inventory/inventory.service';
@@ -10,10 +10,16 @@ import { Inventory } from '../../inventory/inventory.model';
 import { TransactionTableComponent } from "../../inventory/transaction-table/transaction-table.component";
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs'
+import { TagsService } from '../../tags/tags.service';
+import { Tag } from '../../tags/tags.model';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-item-page',
-  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule, MatTabsModule],
+  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule, MatTabsModule, MatChipsModule, MatFormFieldModule, MatIconModule],
   templateUrl: './item-page.component.html',
   styleUrl: './item-page.component.css'
 })
@@ -27,8 +33,10 @@ export class ItemPageComponent {
   public item: Observable<ItemGroup | null>;
   public itemIsNull: boolean = false;
   public inventory: Observable<Inventory | null> = of(null);
+  public tags: Tag[] | null = null;
+  public separatorKeysCodes = [ENTER, COMMA];
 
-  constructor(private route: ActivatedRoute, private itemsService: ItemsService, private inventoryService: InventoryService) {
+  constructor(private route: ActivatedRoute, private itemsService: ItemsService, private inventoryService: InventoryService, private tagsService: TagsService) {
     this.item = this.itemsService.getItem(this.route.snapshot.params['name'])
 
     this.item.subscribe(item => {
@@ -36,6 +44,7 @@ export class ItemPageComponent {
         this.itemIsNull = true;
       } else {
         this.inventory = inventoryService.getTransactions(item.name);
+        tagsService.getTags(item.name).subscribe(ts => this.tags = ts);
       }
     })
   }
@@ -62,5 +71,20 @@ export class ItemPageComponent {
       }];
     }
     return item.sub_items;
+  }
+
+  deleteTag(tag: Tag) {
+    this.tagsService.deleteTag(tag.id);
+    this.tags = this.tags ? this.tags.filter(t => t.id != tag.id) : [];
+  }
+
+  addTag(item: Item, event: MatChipInputEvent) {
+    let tag_name = event.value.trim();
+    if (tag_name.length < 1) return;
+
+    this.tagsService.postTag(item.name, tag_name).subscribe(v => {
+      this.tags?.push(v);
+      event.chipInput.clear();
+    });
   }
 }

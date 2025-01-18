@@ -10,7 +10,7 @@ mat-card {
     padding: 20px;
 }
 
-.stats, .table {
+.stats, .table, .tags {
     margin-top: 40px;
 }
 
