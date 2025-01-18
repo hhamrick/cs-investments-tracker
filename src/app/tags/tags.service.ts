@@ -21,7 +21,7 @@ export class TagsService {
     this.http.delete(`api/tags/${id}`).subscribe();
   }
 
-  getTags(item_name: string): Observable<Tag[]> {
-    return this.http.get<Tag[]>(`api/tags/${item_name}`).pipe(catchError(() => of([])));
+  getTags(item_name: string): Observable<Tag[] | null> {
+    return this.http.get<Tag[]>(`api/tags/${item_name}`).pipe(catchError(() => of(null)));
   }
 }
