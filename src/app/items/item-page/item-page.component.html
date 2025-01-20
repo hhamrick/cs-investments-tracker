@@ -29,11 +29,9 @@
             <app-transaction-table [transactions]="inventory.transactions" [items]="getItems(item)" />
         </mat-card>
 
-        <mat-card appearance="outlined" class="stats">
-            <mat-card-subtitle *ngFor="let stat of getStatEntries(inventory)">
-                {{stat[0]}}: {{stat[1]}}
-            </mat-card-subtitle>
-        </mat-card>
+        <div class="stats">
+            <app-stats-card [inventory]="inventory"/>
+        </div>
     </div>
 
     <div *ngIf="tags">

@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { UserService } from '../user/user.service';
 import { MatButtonModule } from '@angular/material/button';
+import { StatsCardComponent } from '../inventory/stats-card/stats-card.component';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, StatsCardComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })

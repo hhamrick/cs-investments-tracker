@@ -1,4 +1,4 @@
-mat-card {
+.item, .table, .stats, .tags {
     width: 50%;
     min-width: 600px;
     margin: 0 auto;

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ItemsService } from '../items.service';
 import { Item, ItemGroup } from '../items.model';
-import { filter, map, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
 import { InventoryService } from '../../inventory/inventory.service';
@@ -16,10 +16,11 @@ import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { StatsCardComponent } from '../../inventory/stats-card/stats-card.component';
 
 @Component({
   selector: 'app-item-page',
-  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule, MatTabsModule, MatChipsModule, MatFormFieldModule, MatIconModule],
+  imports: [CommonModule, NotFoundPageComponent, TransactionTableComponent, MatCardModule, MatTabsModule, MatChipsModule, MatFormFieldModule, MatIconModule, StatsCardComponent],
   templateUrl: './item-page.component.html',
   styleUrl: './item-page.component.css'
 })
@@ -51,15 +52,6 @@ export class ItemPageComponent {
 
   isGroup(item: ItemGroup) {
     return item.sub_items.length > 0;
-  }
-
-  getStatEntries(inventory: Inventory) {
-    let entries = Object.entries(inventory.stats).map(([key, value]) => [this.statNameFormat(key), value]);
-    return entries;
-  }
-
-  statNameFormat(stat: string) {
-    return stat.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
 
   getItems(item: ItemGroup) {
