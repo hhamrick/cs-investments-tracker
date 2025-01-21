@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { NotFoundPageComponent } from '../../not-found-page/not-found-page.component';
 import { InventoryService } from '../../inventory/inventory.service';
-import { Inventory } from '../../inventory/inventory.model';
+import { Transaction } from '../../inventory/inventory.model';
 import { TransactionTableComponent } from "../../inventory/transaction-table/transaction-table.component";
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs'
@@ -33,7 +33,7 @@ export class ItemPageComponent {
 
   public item: Observable<ItemGroup | null>;
   public itemIsNull: boolean = false;
-  public inventory: Observable<Inventory | null> = of(null);
+  public inventory: Observable<Transaction[] | null> = of(null);
   public tags: Tag[] | null = null;
   public separatorKeysCodes = [ENTER, COMMA];
 

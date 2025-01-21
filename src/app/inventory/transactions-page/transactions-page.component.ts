@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Inventory } from '../inventory.model';
+import { Transaction } from '../inventory.model';
 import { InventoryService } from '../inventory.service';
 import { TransactionTableComponent } from '../transaction-table/transaction-table.component';
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +19,7 @@ export class TransactionsPageComponent {
     component: TransactionsPageComponent
   }
 
-  public inventory: Observable<Inventory | null> = of(null);
+  public inventory: Observable<Transaction[] | null> = of(null);
 
   constructor(private inventoryService: InventoryService) {
     this.inventory = inventoryService.getTransactions();

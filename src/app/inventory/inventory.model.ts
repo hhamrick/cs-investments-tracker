@@ -1,3 +1,5 @@
+import { Item } from "../items/items.model";
+
 export interface Stats {
     total_quantity: number;
     total_spent: number;
@@ -12,15 +14,15 @@ export interface Transaction {
     price: number;
 }
 
-export interface Inventory {
-    stats: Stats;
-    transactions: Transaction[];
-}
-
 export interface InventoryItem {
     name: string;
     group_name: string;
     quantity: number;
     price: number;
     img_url: string;
+}
+
+export interface InvForStats {
+    transactions: Transaction[];
+    items: Item[];
 }

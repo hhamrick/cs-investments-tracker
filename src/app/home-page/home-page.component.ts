@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { InventoryService } from '../inventory/inventory.service';
 import { Observable } from 'rxjs';
-import { Inventory } from '../inventory/inventory.model';
+import { InvForStats } from '../inventory/inventory.model';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { UserService } from '../user/user.service';
@@ -21,13 +21,13 @@ export class HomePageComponent {
     component: HomePageComponent
   }
 
-  inventory: Observable<Inventory  | null>;
+  inventory: Observable<InvForStats | null>;
   invIsNull: boolean = false;
 
   constructor(private inventoryService: InventoryService, private userService: UserService) {
-    this.inventory = inventoryService.getTransactions();
-    this.inventory.subscribe((inv) => {
-      if (inv == null) this.invIsNull = true;
+    this.inventory = inventoryService.getInvForStats();
+    this.inventory.subscribe((t) => {
+      if (t == null) this.invIsNull = true;
     });
   }
 

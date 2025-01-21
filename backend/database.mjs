@@ -228,6 +228,20 @@ export async function getInventory(user_id) {
     );
 }
 
+export async function getInvForStats(user_id) {
+    let transactions = await getTransactions(user_id);
+
+    let items = await db.all(`
+        SELECT inventory.item_name AS name, items.price AS price, items.img_url AS img_url
+        FROM inventory
+        JOIN items ON items.name = inventory.item_name
+        WHERE inventory.user_id = ?
+        GROUP BY inventory.item_name
+    `, [user_id]);
+
+    return {transactions, items};
+}
+
 export async function addTag(user_id, item_name, tag_name) {
     let item = await db.get(`
         SELECT name FROM items

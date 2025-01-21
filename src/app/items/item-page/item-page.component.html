@@ -26,11 +26,11 @@
 
     <div *ngIf="inventory | async as inventory">        
         <mat-card appearance="outlined" class="table">
-            <app-transaction-table [transactions]="inventory.transactions" [items]="getItems(item)" />
+            <app-transaction-table [transactions]="inventory" [items]="getItems(item)" />
         </mat-card>
 
         <div class="stats">
-            <app-stats-card [inventory]="inventory"/>
+            <app-stats-card [inventory]="inventory" [items]="item.sub_items.length ? item.sub_items : [{name: item.name, price: item.price, img_url: item.img_url}]"/>
         </div>
     </div>
 

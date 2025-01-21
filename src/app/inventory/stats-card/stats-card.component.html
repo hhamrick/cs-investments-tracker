@@ -1,5 +1,5 @@
 <mat-card appearance="outlined" class="stats">
-    <mat-card-subtitle *ngFor="let stat of getStatEntries()">
-        {{stat[0]}}: {{stat[1] | currency:'USD'}}
+    <mat-card-subtitle *ngFor="let stat of getStats()">
+        {{stat}}
     </mat-card-subtitle>
 </mat-card>

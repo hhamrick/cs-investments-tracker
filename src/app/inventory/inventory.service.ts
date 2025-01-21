@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
-import { Inventory, InventoryItem, Transaction } from './inventory.model';
+import { InventoryItem, InvForStats, Transaction } from './inventory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,14 +21,18 @@ export class InventoryService {
     this.http.delete<null>(`api/inventory/transaction/${id}`).subscribe();
   }
 
-  getTransactions(item_name?: string): Observable<Inventory | null> {
+  getTransactions(item_name?: string): Observable<Transaction[] | null> {
     if (item_name) {
-      return this.http.get<Inventory>(`api/inventory/transactions?item=${item_name}`).pipe(catchError(() => of(null)));
+      return this.http.get<Transaction[]>(`api/inventory/transactions?item=${item_name}`).pipe(catchError(() => of(null)));
     }
-    return this.http.get<Inventory>('api/inventory/transactions').pipe(catchError(() => of(null)));
+    return this.http.get<Transaction[]>('api/inventory/transactions').pipe(catchError(() => of(null)));
   }
 
   getInventory(): Observable<InventoryItem[]> {
     return this.http.get<InventoryItem[]>('api/inventory').pipe(catchError(() => of([])));
+  }
+
+  getInvForStats(): Observable<InvForStats | null> {
+    return this.http.get<InvForStats>('api/inventory/forstats').pipe(catchError(() => of(null)));
   }
 }

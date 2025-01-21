@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { checkAuth } from './auth.mjs';
-import { addInvTransaction, deleteInvTransaction, getInventory, getTransactions } from '../database.mjs';
+import { addInvTransaction, deleteInvTransaction, getInventory, getInvForStats, getTransactions } from '../database.mjs';
 
 export const inventory = express.Router();
 inventory.use(passport.session());
@@ -45,21 +45,19 @@ inventory.use(passport.session());
                 return;
             }
 
-            let transactions = await getTransactions(req.user.steamId, req.query.item);
-
-            let total_quantity = transactions.reduce((s, t) => s + t.quantity, 0);
-
-            let total_spent = transactions.filter(t => t.quantity > 0).reduce((s, t) => s + t.quantity * t.price, 0);
-
-            let total_sold = transactions.filter(t => t.quantity < 0).reduce((s, t) => s + t.quantity * t.price, 0);
-
-            let avg_price = total_spent / total_quantity;
-
-            res.send({
-                stats: {total_quantity, total_spent, total_sold, avg_price},
-                transactions
-            });
+            res.send(await getTransactions(req.user.steamId, req.query.item));
     });
+
+    inventory.get('/forstats',
+        async (req, res) => {
+            if (!req.user) {
+                res.status(403).send('Not authenticated.');
+                return;
+            }
+
+            res.send(await getInvForStats(req.user.steamId, req.query.item));
+        }
+    )
 
     inventory.get('/',
         // checkAuth,

@@ -1,5 +1,5 @@
 <div *ngIf="inventory | async as inventory" class="stats-card">
-    <app-stats-card [inventory]="inventory"/>
+    <app-stats-card [inventory]="inventory.transactions" [items]="inventory.items"/>
 </div>
 
 <mat-card *ngIf="invIsNull" appearance="outlined" class="login-card">

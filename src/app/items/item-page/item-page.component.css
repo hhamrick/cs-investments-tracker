@@ -4,7 +4,7 @@
     margin: 0 auto;
 }
 
-.item, .stats {
+.item {
     align-items: center;
     text-align: center;
     padding: 20px;
